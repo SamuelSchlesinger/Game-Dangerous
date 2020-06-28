@@ -164,11 +164,11 @@ set_verbose_mode game_state args =
 set_story_state game_state args = (Just game_state {s1_ = (s1_ game_state) {story_state = read (args !! 0)}}, "set_story_state succeeded.")
 
 -- These are the pages used in the hierarchical dictionary look up used to interpret console input.
-page0 = ["unlock", "set", "send_signal"]
-page1 = ["Wall_grid", "Floor_grid", "Obj_grid", "Play_state0", "Play_state1"]
-page2 = ["structure", "textures", "Obj_place"]
-page3 = ["position", "angle", "rend_mode"]
-page4 = ["health", "ammo", "gems", "torches", "keys", "region", "difficulty", "verbose_mode", "story_state"]
+page0 = ["unlock", "set", "sendsignal"]
+page1 = ["wallgrid", "floorgrid", "objgrid", "playstate0", "playstate1"]
+page2 = ["structure", "textures", "objplace"]
+page3 = ["position", "angle", "rendmode"]
+page4 = ["health", "ammo", "gems", "torches", "keys", "region", "difficulty", "verbosemode", "storystate"]
 
 -- These are the sets of branches that exist for non - end nodes.
 base_branches = array (0, 2) [(0, unlock_node), (1, set_node), (2, send_signal_node)]
@@ -244,6 +244,17 @@ interpret_command (x:xs) comm_struct game_state =
     if isNothing look_up == True then (game_state, "\nInvalid command.")
     else interpret_command xs ((fromJust (branches comm_struct)) ! (fromJust look_up)) game_state
 
+console_front :: [Char] -> Game_state -> IO Game_state
+console_front command game_state =
+  let result = interpret_command (splitOn " " command) base_node game_state
+  in do
+  if command == "exit" then return game_state
+  else do
+    putStr ("\n" ++ snd result)
+    putStr "\n\nCommand: "
+    next_command <- getLine
+    console_front next_command (fst result)
+
 -- When the engine is in interactive or menu input mode, this is the callback that GLUT calls each time mainLoopEvent has been called and there is keyboard input
 -- in the window message queue.
 get_input :: IORef Int -> Array Int Char -> Char -> Position -> IO ()
@@ -264,13 +275,4 @@ get_input ref key_set key pos = do
   else if key == key_set ! 13 then writeIORef ref 15  -- Go back one level in menu
   else if key == key_set ! 14 then writeIORef ref 16  -- Return to menu root
   else writeIORef ref 0
-
--- When the engine is in console input mode, this is the callback that GLUT calls each time mainLoopEvent has been called and there is keyboard input
--- in the window message queue.
-get_console_input :: IORef Int -> Array Int Char -> Int -> Char -> Position -> IO ()
-get_console_input ref key_table i key pos = do
-  if i > 36 then return ()
-  else if key_table ! i == key then writeIORef ref i
-  else get_console_input ref key_table (i + 1) key pos
-
 
