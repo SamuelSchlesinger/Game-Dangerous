@@ -1,13 +1,15 @@
-Game :: Dangerous code size audit (19/07/2020)
+Game :: Dangerous code size audit (25/03/2021)
 
-Engine (Haskell): 3651 lines, 5.97% comments, 275 KB
+Engine (Haskell): 3981 lines, 5.63% comments, 262.9 KB
 
 Development tool chain (Haskell): 546 lines, 5.13% comments, 37 KB
 
-Total Haskell code: 312 KB
+Total Haskell code: 299.9 KB
 
-Rendering shaders (OpenGL Shading Language): 447 lines, 15 KB
+Rendering shaders (OpenGL Shading Language): 469 lines, 15 KB
 
 Map editor (C#): 638 lines, 31 KB
 
-Total: 358 KB
+Total: 345.9 KB
+
+
